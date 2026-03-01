@@ -1,13 +1,23 @@
+import { supabase } from './SupabaseConfig.js';
+
 export class SyncService {
     constructor(eventBus) {
         this.eventBus = eventBus;
-        this.baseUrl = 'http://localhost:3005/api';
         this.token = localStorage.getItem('pomoToDo_authToken') || null;
         this.username = localStorage.getItem('pomoToDo_username') || null;
         this.isSyncing = false;
 
-        // Expose to window for easy debugging/access if needed
         window.syncService = this;
+
+        // Listen to auth state changes from Supabase
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (session) {
+                const username = session.user.user_metadata?.username || session.user.email.split('@')[0];
+                this.setToken(session.access_token, username);
+            } else {
+                this.setToken(null, null);
+            }
+        });
     }
 
     isLoggedIn() {
@@ -28,49 +38,42 @@ export class SyncService {
     }
 
     async register(username, password) {
-        try {
-            const response = await fetch(`${this.baseUrl}/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Registration failed');
-            return true;
-        } catch (error) {
-            console.error('Registration error:', error);
-            throw error;
-        }
+        // Supabase requires email, so we append a dummy domain if username doesn't have one
+        const email = username.includes('@') ? username : `${username}@pomotodo.com`;
+
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    username: username
+                }
+            }
+        });
+
+        if (error) throw new Error(error.message);
+        return true;
     }
 
     async login(username, password) {
-        try {
-            const response = await fetch(`${this.baseUrl}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Login failed');
+        const email = username.includes('@') ? username : `${username}@pomotodo.com`;
 
-            this.setToken(data.token, data.username);
-            return true;
-        } catch (error) {
-            console.error('Login error:', error);
-            throw error;
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            if (error.message.includes('Invalid login credentials')) {
+                throw new Error("ユーザー名またはパスワードが間違っています。");
+            }
+            throw new Error(error.message);
         }
+        return true;
     }
 
     async logout() {
-        if (!this.token) return;
-        try {
-            await fetch(`${this.baseUrl}/logout`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${this.token}` }
-            });
-        } catch (e) {
-            console.warn('Logout API failed, clearing local token anyway');
-        }
+        await supabase.auth.signOut();
         this.setToken(null, null);
     }
 
@@ -117,18 +120,19 @@ export class SyncService {
         const state = this.getStateSnapshot();
 
         try {
-            const response = await fetch(`${this.baseUrl}/sync`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.token}`
-                },
-                body: JSON.stringify(state)
-            });
-
-            if (response.status === 401) {
-                // Token expired
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
+            if (authError || !user) {
                 this.setToken(null, null);
+                return;
+            }
+
+            const { error } = await supabase
+                .from('user_data')
+                .upsert({ id: user.id, data: state });
+
+            if (error) {
+                console.error("Supabase upsert error:", error);
+                throw error;
             }
         } catch (error) {
             console.error('Push sync error:', error);
@@ -142,23 +146,24 @@ export class SyncService {
 
         this.isSyncing = true;
         try {
-            const response = await fetch(`${this.baseUrl}/sync`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${this.token}`
-                }
-            });
-
-            if (response.status === 401) {
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
+            if (authError || !user) {
                 this.setToken(null, null);
                 return;
             }
 
-            if (response.ok) {
-                const data = await response.json();
-                if (Object.keys(data).length > 0) {
-                    this.restoreState(data);
-                }
+            const { data, error } = await supabase
+                .from('user_data')
+                .select('data')
+                .eq('id', user.id)
+                .single();
+
+            if (error && error.code !== 'PGRST116') { // PGRST116 is "No rows found"
+                throw error;
+            }
+
+            if (data && data.data) {
+                this.restoreState(data.data);
             }
         } catch (error) {
             console.error('Pull sync error:', error);
