@@ -37,27 +37,17 @@ export class SyncService {
         this.eventBus.emit('authStateChanged', this.isLoggedIn());
     }
 
-    async register(username, password) {
-        // Supabase requires email, so we append a dummy domain if username doesn't have one
-        const email = username.includes('@') ? username : `${username}@pomotodo.com`;
-
+    async register(email, password) {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: {
-                    username: username
-                }
-            }
         });
 
         if (error) throw new Error(error.message);
         return true;
     }
 
-    async login(username, password) {
-        const email = username.includes('@') ? username : `${username}@pomotodo.com`;
-
+    async login(email, password) {
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
@@ -65,11 +55,24 @@ export class SyncService {
 
         if (error) {
             if (error.message.includes('Invalid login credentials')) {
-                throw new Error("ユーザー名またはパスワードが間違っています。");
+                throw new Error("メールアドレスまたはパスワードが間違っています。");
             }
             throw new Error(error.message);
         }
         return true;
+    }
+
+    async loginWithGoogle() {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
+        if (error) {
+            console.error('Google login error:', error);
+            throw new Error(error.message);
+        }
     }
 
     async logout() {
