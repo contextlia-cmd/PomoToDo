@@ -144,6 +144,8 @@ export class PomodoroTimer {
                 this.cycleStep = 2;
                 shouldAutoStart = true;
             } else if (this.cycleStep === 3) {
+                document.dispatchEvent(new CustomEvent('pomodoroComplete'));
+
                 soundType = 'cycle-complete';
                 this.cycleStep = 0;
                 shouldAutoStart = false;
