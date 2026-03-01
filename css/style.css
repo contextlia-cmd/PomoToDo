@@ -10,9 +10,60 @@
     --danger-color: #ef233c;
     --success-color: #38b000;
     --gradient-bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    --blob-a-bg: #ff00cc;
+    --blob-b-bg: #333399;
+    --blob-c-bg: #00d2ff;
     --font-family: 'Outfit', sans-serif;
     --card-radius: 20px;
     --transition-speed: 0.3s;
+}
+
+[data-theme="B"] {
+    /* Fresh Ocean */
+    --bg-color: #e0f2f1;
+    --text-color: #0d47a1;
+    --text-muted: #546e7a;
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --accent-color: #00bfa5;
+    --accent-glow: #1de9b6;
+    --secondary-color: #00838f;
+    --gradient-bg: linear-gradient(135deg, #e0f7fa, #b2ebf2, #80deea);
+    --blob-a-bg: #1de9b6;
+    --blob-b-bg: #00b4d8;
+    --blob-c-bg: #48cae4;
+}
+
+[data-theme="C"] {
+    /* Sunset Warm */
+    --bg-color: #fff3e0;
+    --text-color: #3e2723;
+    --text-muted: #6d4c41;
+    --glass-bg: rgba(255, 255, 255, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.7);
+    --accent-color: #ff6d00;
+    --accent-glow: #ff9100;
+    --secondary-color: #dd2c00;
+    --gradient-bg: linear-gradient(135deg, #fff3e0, #ffe0b2, #ffcc80);
+    --blob-a-bg: #ff6d00;
+    --blob-b-bg: #e65100;
+    --blob-c-bg: #ffd180;
+}
+
+[data-theme="D"] {
+    /* Cyber Dark */
+    --bg-color: #050505;
+    --text-color: #e0e0e0;
+    --text-muted: #757575;
+    --glass-bg: rgba(5, 5, 5, 0.7);
+    --glass-border: rgba(0, 255, 204, 0.2);
+    --accent-color: #00ffcc;
+    --accent-glow: #00ffcc;
+    --secondary-color: #ff0055;
+    --gradient-bg: linear-gradient(135deg, #020202, #0a0a0a, #000000);
+    --blob-a-bg: #00ffcc;
+    --blob-b-bg: #ff0055;
+    --blob-c-bg: #8a2be2;
 }
 
 * {
@@ -55,7 +106,7 @@ body {
 .bloba {
     width: 300px;
     height: 300px;
-    background: #ff00cc;
+    background: var(--blob-a-bg);
     top: 10%;
     left: 20%;
 }
@@ -63,7 +114,7 @@ body {
 .blobb {
     width: 400px;
     height: 400px;
-    background: #333399;
+    background: var(--blob-b-bg);
     bottom: 20%;
     right: 10%;
     animation-delay: -5s;
@@ -72,7 +123,7 @@ body {
 .blobc {
     width: 350px;
     height: 350px;
-    background: #00d2ff;
+    background: var(--blob-c-bg);
     bottom: 10%;
     left: 10%;
     animation-delay: -10s;
@@ -103,9 +154,8 @@ body {
 
 .app-header h1 {
     font-size: 2.5rem;
-    background: linear-gradient(to right, #fff, #b3b3b3);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    color: var(--text-color);
     margin-bottom: 0.5rem;
 }
 
@@ -118,6 +168,7 @@ body {
     grid-template-columns: minmax(300px, 1fr) minmax(350px, 1.5fr) minmax(300px, 1fr);
     grid-template-areas:
         "timer tasks misa"
+        "kanban kanban kanban"
         "links links links";
     gap: 1.5rem;
     align-items: start;
@@ -141,11 +192,16 @@ body {
     grid-area: links;
 }
 
+.kanban-section {
+    grid-area: kanban;
+}
+
 @media (max-width: 1024px) {
     .grid-layout {
         grid-template-columns: 1fr 1fr;
         grid-template-areas:
             "timer misa"
+            "kanban kanban"
             "tasks tasks"
             "links links";
     }
@@ -157,6 +213,7 @@ body {
         grid-template-areas:
             "timer"
             "misa"
+            "kanban"
             "tasks"
             "links";
     }

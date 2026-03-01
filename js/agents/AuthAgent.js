@@ -12,7 +12,21 @@ export class AuthAgent {
         // Create Header Auth Button
         this.authBtnContainer = document.createElement('div');
         this.authBtnContainer.className = 'auth-btn-container';
+        this.authBtnContainer.style.display = 'flex';
+        this.authBtnContainer.style.alignItems = 'center';
+        this.authBtnContainer.style.gap = '12px';
         this.authBtnContainer.innerHTML = `
+            <div class="theme-selector-container" style="position:relative;">
+                <button id="theme-settings-btn" class="btn btn-icon-small" title="UI Theme Settings" style="width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color);">
+                    <i class="ri-palette-line"></i>
+                </button>
+                <div id="theme-dropdown" class="hidden glass-panel" style="position:absolute; right:0; top:45px; z-index: 1000; width:max-content; padding:12px; border-radius:12px; display:flex; gap:10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <button class="theme-option" data-theme-val="A" title="A: Classic Cosmic" style="background:linear-gradient(135deg, #0f0c29, #302b63); width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s, border-color 0.2s;"></button>
+                    <button class="theme-option" data-theme-val="B" title="B: Fresh Ocean" style="background:linear-gradient(135deg, #e0f7fa, #80deea); width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s, border-color 0.2s;"></button>
+                    <button class="theme-option" data-theme-val="C" title="C: Sunset Warm" style="background:linear-gradient(135deg, #fff3e0, #ffcc80); width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s, border-color 0.2s;"></button>
+                    <button class="theme-option" data-theme-val="D" title="D: Cyber Dark" style="background:#050505; width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.5); transition: transform 0.2s, border-color 0.2s;"></button>
+                </div>
+            </div>
             <button id="header-auth-btn" class="btn btn-outline-primary">
                 <i class="ri-user-line"></i> <span id="auth-btn-text">Login</span>
             </button>
@@ -123,9 +137,62 @@ export class AuthAgent {
             // Data remains locally, user can continue as guest or login again
         });
 
+        // Theme settings logic
+        this.themeBtn = document.getElementById('theme-settings-btn');
+        this.themeDropdown = document.getElementById('theme-dropdown');
+        this.themeOptions = document.querySelectorAll('.theme-option');
+
+        if (this.themeBtn && this.themeDropdown) {
+            this.themeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.themeDropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', () => {
+                if (!this.themeDropdown.classList.contains('hidden')) {
+                    this.themeDropdown.classList.add('hidden');
+                }
+            });
+
+            this.themeDropdown.addEventListener('click', (e) => e.stopPropagation());
+
+            this.themeOptions.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const theme = btn.dataset.themeVal;
+                    this.setTheme(theme);
+                    this.themeDropdown.classList.add('hidden');
+                });
+            });
+
+            // Initial load from storage
+            const loadedTheme = localStorage.getItem('pomoToDo_theme') || 'A';
+            this.setTheme(loadedTheme);
+        }
+
         // Listen for global auth state changes
         this.eventBus.on('authStateChanged', () => {
             this.updateHeaderBtn();
+        });
+    }
+
+    setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('pomoToDo_theme', theme);
+
+        // Let SyncService know if available
+        if (window.app && window.app.syncService) {
+            window.app.syncService.triggerSync();
+        }
+
+        // Update active selection UI
+        this.themeOptions.forEach(btn => {
+            if (btn.dataset.themeVal === theme) {
+                btn.style.borderColor = 'var(--text-color)';
+                btn.style.transform = 'scale(1.1)';
+            } else {
+                btn.style.borderColor = 'transparent';
+                btn.style.transform = 'scale(1)';
+            }
         });
     }
 

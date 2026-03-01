@@ -93,7 +93,8 @@ export class SyncService {
             links: JSON.parse(localStorage.getItem('pomoToDo_links') || '[]'),
             misaIcon: localStorage.getItem('pomoToDo_misa_icon') || '',
             kanbanProjects: JSON.parse(localStorage.getItem('pomtodo_kanban_projects') || '[]'),
-            kanbanPomoTime: JSON.parse(localStorage.getItem('pomtodo_kanban_pomo_time') || '{}')
+            kanbanPomoTime: JSON.parse(localStorage.getItem('pomtodo_kanban_pomo_time') || '{}'),
+            theme: localStorage.getItem('pomoToDo_theme') || 'A'
         };
     }
 
@@ -112,6 +113,7 @@ export class SyncService {
         if (serverData.misaIcon) localStorage.setItem('pomoToDo_misa_icon', serverData.misaIcon);
         if (serverData.kanbanProjects) localStorage.setItem('pomtodo_kanban_projects', JSON.stringify(serverData.kanbanProjects));
         if (serverData.kanbanPomoTime) localStorage.setItem('pomtodo_kanban_pomo_time', JSON.stringify(serverData.kanbanPomoTime));
+        if (serverData.theme) localStorage.setItem('pomoToDo_theme', serverData.theme);
 
         // Notify application to redraw with new data
         this.eventBus.emit('dataSynced');

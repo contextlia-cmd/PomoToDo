@@ -307,8 +307,8 @@ const KanbanBoard = (() => {
 
   // ---------- セクション構築 ----------
   function buildSection() {
-    const section = document.createElement('div');
-    section.className = 'widget kanban-widget';
+    const section = document.createElement('section');
+    section.className = 'card glass-panel kanban-section';
     section.innerHTML = `
       <div class="kb-header">
         <h2>🎨 案件管理</h2>
@@ -640,14 +640,16 @@ const KanbanBoard = (() => {
       || document.querySelector('.dashboard')
       || document.body;
 
-    // Tasks セクションの前に挿入を試みる
-    const tasksSection = Array.from(document.querySelectorAll('h2, .widget'))
-      .find(el => el.textContent.includes('Tasks') || el.textContent.includes('タスク'));
-
-    if (tasksSection) {
-      tasksSection.closest('.widget')
-        ? tasksSection.closest('.widget').before(section)
-        : tasksSection.before(section);
+    // .grid-layout内に直接挿入
+    const gridLayout = document.querySelector('.grid-layout');
+    if (gridLayout) {
+      // linksセクションの前に挿入（エリアはCSSで制御）
+      const linksSection = gridLayout.querySelector('.links-section');
+      if (linksSection) {
+        linksSection.before(section);
+      } else {
+        gridLayout.appendChild(section);
+      }
     } else {
       target.appendChild(section);
     }
