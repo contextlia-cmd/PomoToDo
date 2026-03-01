@@ -83,6 +83,9 @@ export class AuthAgent {
                 <div class="auth-logged-in-body hidden">
                     <p>Logged in as: <strong id="auth-logged-in-user"></strong></p>
                     <p class="text-muted" style="margin: 1rem 0; font-size: 0.85rem;">Your data is being safely synced to the server.</p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+                        <button id="auth-force-sync-btn" class="btn btn-outline-primary" style="flex: 1;"><i class="ri-cloud-upload-line"></i> Force Sync</button>
+                    </div>
                     <button id="auth-logout-btn" class="btn btn-danger" style="width:100%;">Log Out</button>
                 </div>
             </div>
@@ -107,6 +110,7 @@ export class AuthAgent {
         this.authBody = this.modalOverlay.querySelector('.auth-logged-in-body');
         this.loggedInUserDisplay = document.getElementById('auth-logged-in-user');
         this.logoutBtn = document.getElementById('auth-logout-btn');
+        this.forceSyncBtn = document.getElementById('auth-force-sync-btn');
 
         this.mode = 'login'; // 'login' or 'register'
 
@@ -135,6 +139,26 @@ export class AuthAgent {
             await this.syncService.logout();
             this.closeModal();
             // Data remains locally, user can continue as guest or login again
+        });
+
+        this.forceSyncBtn.addEventListener('click', async () => {
+            const originalText = this.forceSyncBtn.innerHTML;
+            this.forceSyncBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Syncing...';
+            this.forceSyncBtn.disabled = true;
+            try {
+                await this.syncService.pushToServer();
+                this.forceSyncBtn.innerHTML = '<i class="ri-check-line"></i> Success!';
+                setTimeout(() => {
+                    this.forceSyncBtn.innerHTML = originalText;
+                    this.forceSyncBtn.disabled = false;
+                }, 2000);
+            } catch (e) {
+                this.forceSyncBtn.innerHTML = '<i class="ri-error-warning-line"></i> Failed';
+                setTimeout(() => {
+                    this.forceSyncBtn.innerHTML = originalText;
+                    this.forceSyncBtn.disabled = false;
+                }, 2000);
+            }
         });
 
         // Theme settings logic
