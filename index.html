@@ -97,7 +97,6 @@
                 </div>
                 <div class="card-header">
                     <h2><i class="ri-robot-2-line"></i> Misa 1.0</h2>
-                    <span class="badge" id="misa-status-badge" style="display: none;">New</span>
                 </div>
                 <div class="misa-profile-container">
                     <div class="misa-icon-wrapper" id="misa-icon-wrapper" title="Click to upload icon">
@@ -112,7 +111,9 @@
                 <div class="misa-speech-bubble" id="misa-speech-bubble" style="display: none;">
                     <!-- Misa's greeting will appear here -->
                 </div>
-                <div class="misa-message-container">
+                <div class="misa-message-container" style="position: relative;">
+                    <span class="badge" id="misa-status-badge"
+                        style="display: none; position: absolute; top: -12px; right: -12px; z-index: 10;">New</span>
                     <p id="misa-suggestion-text" class="misa-message">現在、提案するタスクはありません。</p>
                     <button id="misa-add-task-btn" class="btn btn-primary w-100" style="display: none;"><i
                             class="ri-add-line"></i> タスクに追加</button>
