@@ -171,6 +171,8 @@ body {
     padding: 1.5rem;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     transition: transform var(--transition-speed);
+    min-width: 0;
+    min-height: 0;
 }
 
 .glass-panel:hover {
