@@ -89,7 +89,11 @@ export class SyncService {
             timePackage: JSON.parse(localStorage.getItem('pomoToDo_timePackage') || '{}'),
             geminiApiKey: localStorage.getItem('gemini_api_key') || '',
             systemPrompt: localStorage.getItem('gemini_system_prompt') || '',
-            misaTasks: JSON.parse(localStorage.getItem('pomoToDo_misa_tasks') || '[]')
+            misaTasks: JSON.parse(localStorage.getItem('pomoToDo_misa_tasks') || '[]'),
+            links: JSON.parse(localStorage.getItem('pomoToDo_links') || '[]'),
+            misaIcon: localStorage.getItem('pomoToDo_misa_icon') || '',
+            kanbanProjects: JSON.parse(localStorage.getItem('pomtodo_kanban_projects') || '[]'),
+            kanbanPomoTime: JSON.parse(localStorage.getItem('pomtodo_kanban_pomo_time') || '{}')
         };
     }
 
@@ -104,6 +108,10 @@ export class SyncService {
         if (serverData.geminiApiKey) localStorage.setItem('gemini_api_key', serverData.geminiApiKey);
         if (serverData.systemPrompt) localStorage.setItem('gemini_system_prompt', serverData.systemPrompt);
         if (serverData.misaTasks) localStorage.setItem('pomoToDo_misa_tasks', JSON.stringify(serverData.misaTasks));
+        if (serverData.links) localStorage.setItem('pomoToDo_links', JSON.stringify(serverData.links));
+        if (serverData.misaIcon) localStorage.setItem('pomoToDo_misa_icon', serverData.misaIcon);
+        if (serverData.kanbanProjects) localStorage.setItem('pomtodo_kanban_projects', JSON.stringify(serverData.kanbanProjects));
+        if (serverData.kanbanPomoTime) localStorage.setItem('pomtodo_kanban_pomo_time', JSON.stringify(serverData.kanbanPomoTime));
 
         // Notify application to redraw with new data
         this.eventBus.emit('dataSynced');

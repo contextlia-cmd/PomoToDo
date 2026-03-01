@@ -8,10 +8,10 @@ const KanbanBoard = (() => {
   const POMO_TIME_KEY = 'pomtodo_kanban_pomo_time';
 
   const STATUSES = [
-    { id: 'rough',    label: 'ラフ',   color: '#a78bfa', icon: '✏️' },
-    { id: 'lineart',  label: '線画',   color: '#60a5fa', icon: '🖊️' },
-    { id: 'coloring', label: '着彩',   color: '#f472b6', icon: '🎨' },
-    { id: 'done',     label: '納品済', color: '#34d399', icon: '✅' },
+    { id: 'rough', label: 'ラフ', color: '#a78bfa', icon: '✏️' },
+    { id: 'lineart', label: '線画', color: '#60a5fa', icon: '🖊️' },
+    { id: 'coloring', label: '着彩', color: '#f472b6', icon: '🎨' },
+    { id: 'done', label: '納品済', color: '#34d399', icon: '✅' },
   ];
 
   let projects = [];
@@ -25,6 +25,7 @@ const KanbanBoard = (() => {
   }
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    if (window.syncService) window.syncService.triggerSync();
   }
   function loadPomoTime() {
     try { return JSON.parse(localStorage.getItem(POMO_TIME_KEY)) || {}; }
@@ -32,6 +33,7 @@ const KanbanBoard = (() => {
   }
   function savePomoTime(data) {
     localStorage.setItem(POMO_TIME_KEY, JSON.stringify(data));
+    if (window.syncService) window.syncService.triggerSync();
   }
 
   // ポモドーロ完了時に呼び出す（外部から）
@@ -151,7 +153,7 @@ const KanbanBoard = (() => {
 
     const days = daysUntil(proj.deadline);
     const urgency = days !== null && days <= 2 ? 'kb-deadline--urgent'
-                  : days !== null && days <= 7 ? 'kb-deadline--warn' : '';
+      : days !== null && days <= 7 ? 'kb-deadline--warn' : '';
 
     const pomoMin = getPomoMinutes(proj.id);
     const hourlyRate = proj.price && pomoMin > 0
@@ -643,7 +645,7 @@ const KanbanBoard = (() => {
       .find(el => el.textContent.includes('Tasks') || el.textContent.includes('タスク'));
 
     if (tasksSection) {
-      tasksSection.closest('.widget') 
+      tasksSection.closest('.widget')
         ? tasksSection.closest('.widget').before(section)
         : tasksSection.before(section);
     } else {

@@ -88,6 +88,7 @@ export class MisaAgent {
                 const dataUrl = event.target.result;
                 // Save and update UI
                 localStorage.setItem(this.STORAGE_KEY, dataUrl);
+                if (window.app && window.app.syncService) window.app.syncService.triggerSync();
                 this.iconImg.src = dataUrl;
                 this.iconImg.style.display = 'block';
                 this.defaultIcon.style.display = 'none';

@@ -60,6 +60,7 @@ export class LinkManager {
 
     save() {
         StorageService.set('links', this.links);
+        if (window.app && window.app.syncService) window.app.syncService.triggerSync();
     }
 
     getFavicon(url) {
