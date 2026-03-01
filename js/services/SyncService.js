@@ -83,15 +83,15 @@ export class SyncService {
     // Collect all local storage state managed by different components
     getStateSnapshot() {
         return {
-            todos: JSON.parse(localStorage.getItem('pomoToDo_todos') || '[]'),
-            tags: JSON.parse(localStorage.getItem('pomoToDo_tags') || '[]'),
-            stats: JSON.parse(localStorage.getItem('pomoToDo_stats') || '{}'),
+            todos: JSON.parse(localStorage.getItem('todos') || '[]'),
+            tags: JSON.parse(localStorage.getItem('tags') || '[]'),
+            stats: JSON.parse(localStorage.getItem('pomodoro_sessions') || '{}'),
             timePackage: JSON.parse(localStorage.getItem('pomoToDo_timePackage') || '{}'),
             geminiApiKey: localStorage.getItem('gemini_api_key') || '',
             systemPrompt: localStorage.getItem('gemini_system_prompt') || '',
             misaTasks: JSON.parse(localStorage.getItem('pomoToDo_misa_tasks') || '[]'),
-            links: JSON.parse(localStorage.getItem('pomoToDo_links') || '[]'),
-            misaIcon: localStorage.getItem('pomoToDo_misa_icon') || '',
+            links: JSON.parse(localStorage.getItem('links') || '[]'),
+            misaIcon: localStorage.getItem('misa_agent_icon') || localStorage.getItem('pomoToDo_misa_icon') || '',
             kanbanProjects: JSON.parse(localStorage.getItem('pomtodo_kanban_projects') || '[]'),
             kanbanPomoTime: JSON.parse(localStorage.getItem('pomtodo_kanban_pomo_time') || '{}'),
             theme: localStorage.getItem('pomoToDo_theme') || 'A'
@@ -102,15 +102,15 @@ export class SyncService {
     restoreState(serverData) {
         if (!serverData) return;
 
-        if (serverData.todos) localStorage.setItem('pomoToDo_todos', JSON.stringify(serverData.todos));
-        if (serverData.tags) localStorage.setItem('pomoToDo_tags', JSON.stringify(serverData.tags));
-        if (serverData.stats) localStorage.setItem('pomoToDo_stats', JSON.stringify(serverData.stats));
+        if (serverData.todos) localStorage.setItem('todos', JSON.stringify(serverData.todos));
+        if (serverData.tags) localStorage.setItem('tags', JSON.stringify(serverData.tags));
+        if (serverData.stats) localStorage.setItem('pomodoro_sessions', JSON.stringify(serverData.stats));
         if (serverData.timePackage) localStorage.setItem('pomoToDo_timePackage', JSON.stringify(serverData.timePackage));
         if (serverData.geminiApiKey) localStorage.setItem('gemini_api_key', serverData.geminiApiKey);
         if (serverData.systemPrompt) localStorage.setItem('gemini_system_prompt', serverData.systemPrompt);
         if (serverData.misaTasks) localStorage.setItem('pomoToDo_misa_tasks', JSON.stringify(serverData.misaTasks));
-        if (serverData.links) localStorage.setItem('pomoToDo_links', JSON.stringify(serverData.links));
-        if (serverData.misaIcon) localStorage.setItem('pomoToDo_misa_icon', serverData.misaIcon);
+        if (serverData.links) localStorage.setItem('links', JSON.stringify(serverData.links));
+        if (serverData.misaIcon) localStorage.setItem('misa_agent_icon', serverData.misaIcon);
         if (serverData.kanbanProjects) localStorage.setItem('pomtodo_kanban_projects', JSON.stringify(serverData.kanbanProjects));
         if (serverData.kanbanPomoTime) localStorage.setItem('pomtodo_kanban_pomo_time', JSON.stringify(serverData.kanbanPomoTime));
         if (serverData.theme) localStorage.setItem('pomoToDo_theme', serverData.theme);
