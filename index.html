@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PomoToDo - Focus Dashboard</title>
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=4">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob bloba"></div>
+        <div class="blob blobb"></div>
+        <div class="blob blobc"></div>
+    </div>
+
+    <div class="app-container">
+        <header class="app-header">
+            <h1><i class="ri-dashboard-3-line"></i> PomoToDo</h1>
+            <p>Your productivity command center</p>
+        </header>
+
+        <main class="grid-layout">
+            <!-- Pomodoro Timer Section -->
+            <section class="card glass-panel pomodoro-section">
+                <div class="card-header">
+                    <h2><i class="ri-timer-flash-line"></i> Timer</h2>
+                    <div class="header-controls">
+                        <div class="timer-tag-display" id="timer-tag-display" title="Click to select tag">
+                            <i class="ri-price-tag-3-fill"></i> <span class="tag-text">No Tag</span>
+                        </div>
+                        <button id="stats-btn" class="btn-icon-small" title="View Statistics"><i
+                                class="ri-bar-chart-box-line"></i></button>
+                    </div>
+                </div>
+
+                <!-- Time Package Progress Section -->
+                <div class="time-package-container">
+                    <div class="time-package-header">
+                        <span class="time-package-title"><i class="ri-briefcase-4-line"></i> Time Package</span>
+                        <select id="time-package-select" class="time-package-select">
+                            <option value="14400">4 Hours</option>
+                            <option value="21600">6 Hours</option>
+                            <option value="28800">8 Hours</option>
+                        </select>
+                    </div>
+                    <div class="time-package-progress-bar">
+                        <div class="time-package-fill" id="time-package-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="time-package-status">
+                        <span id="time-package-remaining">Remaining: 4h 00m</span>
+                        <span id="time-package-percent">0%</span>
+                    </div>
+                </div>
+
+                <div class="timer-display">
+                    <svg class="progress-ring" width="220" height="220">
+                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.1)" stroke-width="8"
+                            fill="transparent" r="100" cx="110" cy="110" />
+                        <circle class="progress-ring__circle" stroke="var(--accent-color)" stroke-width="8"
+                            fill="transparent" r="100" cx="110" cy="110" />
+                    </svg>
+                    <div class="time-text" id="time-display">25:00</div>
+                    <div class="timer-status" id="timer-status">Focus</div>
+                </div>
+                <div class="timer-controls">
+                    <button id="start-btn" class="btn btn-primary"><i class="ri-play-fill"></i> Start</button>
+                    <button id="pause-btn" class="btn btn-secondary" disabled><i class="ri-pause-fill"></i>
+                        Pause</button>
+                    <button id="reset-btn" class="btn btn-danger"><i class="ri-stop-fill"></i> Reset</button>
+                </div>
+                <div class="mode-toggles">
+                    <button class="mode-btn active" data-mode="focus">Focus</button>
+                    <button class="mode-btn" data-mode="short">Short Break</button>
+                    <button class="mode-btn" data-mode="long">Long Break</button>
+                </div>
+            </section>
+
+            <!-- Misa Agent Section -->
+            <section class="card glass-panel misa-section">
+                <!-- Music Controls (Moved to top right of Misa Panel) -->
+                <div class="music-fab-group">
+                    <button id="quick-play-btn" class="chat-fab music-fab-small" title="Quick Play/Pause"
+                        style="display: none;">
+                        <i class="ri-play-fill" id="quick-play-icon"></i>
+                    </button>
+                    <button id="music-fab" class="chat-fab music-fab-small" title="Music Player">
+                        <i class="ri-music-2-fill"></i>
+                    </button>
+                </div>
+                <div class="card-header">
+                    <h2><i class="ri-robot-2-line"></i> Misa 1.0</h2>
+                    <span class="badge" id="misa-status-badge" style="display: none;">New</span>
+                </div>
+                <div class="misa-profile-container">
+                    <div class="misa-icon-wrapper" id="misa-icon-wrapper" title="Click to upload icon">
+                        <img src="" alt="Misa Icon" id="misa-icon-img" style="display: none;">
+                        <i class="ri-robot-2-fill" id="misa-default-icon"></i>
+                        <div class="icon-upload-overlay">
+                            <i class="ri-upload-2-line"></i>
+                        </div>
+                        <input type="file" id="misa-icon-upload" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <div class="misa-speech-bubble" id="misa-speech-bubble" style="display: none;">
+                    <!-- Misa's greeting will appear here -->
+                </div>
+                <div class="misa-message-container">
+                    <p id="misa-suggestion-text" class="misa-message">現在、提案するタスクはありません。</p>
+                    <button id="misa-add-task-btn" class="btn btn-primary w-100" style="display: none;"><i
+                            class="ri-add-line"></i> タスクに追加</button>
+                </div>
+
+                <!-- Gemini Chat Widget -->
+                <div class="chat-widget-container"> <!-- Chat Floating Action Button -->
+                    <button id="chat-fab" class="chat-fab" title="Chat with Misa">
+                        <i class="ri-robot-2-fill"></i>
+                    </button>
+
+                    <!-- Chat Window -->
+                    <div id="chat-window" class="chat-window glass-panel collapsed chat-size-small">
+                        <div class="chat-header">
+                            <h3 class="chat-header-title">
+                                <img src="" alt="Misa Chat Icon" id="chat-misa-icon" style="display: none;">
+                                <i class="ri-robot-2-fill" id="chat-default-icon"></i>
+                                Misa Chat
+                            </h3>
+                            <div class="chat-controls">
+                                <button class="size-btn" data-size="small" title="Small"
+                                    aria-label="Small Size"><b>S</b></button>
+                                <button class="size-btn active" data-size="medium" title="Medium"
+                                    aria-label="Medium Size"><b>M</b></button>
+                                <button class="size-btn" data-size="large" title="Large"
+                                    aria-label="Large Size"><b>L</b></button>
+                                <button id="settings-chat-btn" class="size-btn" title="Settings"
+                                    aria-label="Settings"><i class="ri-settings-3-line"></i></button>
+                                <button id="close-chat-btn" class="close-btn" title="Close" aria-label="Close Chat"><i
+                                        class="ri-close-line"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Settings Screen (API Key and Custom Instructions) -->
+                        <div id="api-key-screen" class="chat-screen" style="display: none;">
+                            <div class="settings-content custom-scrollbar">
+                                <h4>Gemini Settings</h4>
+                                <p class="api-instruction">Gemini API Keyを入力してください。キーはお使いのブラウザにのみ保存されます。</p>
+                                <div class="input-group">
+                                    <input type="password" id="api-key-input" placeholder="AIzaSy...">
+                                    <button id="save-api-key-btn" class="btn btn-primary">Save Key</button>
+                                </div>
+                                <p class="api-help"><a href="https://aistudio.google.com/app/apikey"
+                                        target="_blank">APIキーの取得はこちら</a></p>
+
+                                <h4 style="margin-top: 1.5rem;">Custom Instructions (Optional)</h4>
+                                <p class="api-instruction">Geminiに特定の口調や役割を持たせる場合は入力してください。</p>
+                                <div style="margin-bottom: 1rem;">
+                                    <textarea id="system-prompt-input" rows="4" placeholder="例：あなたは関西弁の気さくなアシスタントです。..."
+                                        style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 10px; padding: 0.8rem; color: white; font-family: inherit; resize: vertical;"></textarea>
+                                </div>
+                                <button id="save-prompt-btn" class="btn btn-secondary w-100">Save Instructions</button>
+                            </div>
+                        </div>
+
+                        <!-- Main Chat Screen -->
+                        <div id="main-chat-screen" class="chat-screen" style="position: relative;">
+                            <div class="chat-inner-icon-container">
+                                <img src="" alt="Misa" id="chat-inner-misa-icon" style="display: none;">
+                                <i class="ri-robot-2-fill" id="chat-inner-default-icon"></i>
+                            </div>
+                            <div id="chat-messages" class="chat-messages custom-scrollbar">
+                                <div class="message ai-message">
+                                    <div class="message-content">こんにちは！何かお手伝いできることはありますか？</div>
+                                </div>
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" id="chat-input" placeholder="Type a message...">
+                                <button id="send-chat-btn" class="btn-icon"><i class="ri-send-plane-fill"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Music Player Window -->
+                    <div id="music-window" class="chat-window glass-panel collapsed chat-size-medium">
+                        <div class="chat-header">
+                            <h3 class="chat-header-title">
+                                <i class="ri-music-2-fill"></i> Misa Music
+                            </h3>
+                            <div class="chat-controls">
+                                <button class="size-btn active" data-size="medium" title="Medium"
+                                    aria-label="Medium Size"><b>M</b></button>
+                                <button class="size-btn" data-size="large" title="Large"
+                                    aria-label="Large Size"><b>L</b></button>
+                                <button id="close-music-btn" class="close-btn" title="Close" aria-label="Close Music"><i
+                                        class="ri-close-line"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="music-player-content custom-scrollbar">
+                            <!-- Now Playing Section -->
+                            <div class="now-playing-section card">
+                                <div class="track-info">
+                                    <div class="track-icon"><i class="ri-disc-line"></i></div>
+                                    <div class="track-details">
+                                        <div id="current-track-name" class="track-name">No track selected</div>
+                                        <div id="current-playlist-name" class="track-artist">Default Playlist</div>
+                                    </div>
+                                </div>
+
+                                <div class="playback-controls">
+                                    <button class="music-btn" id="prev-track-btn"><i
+                                            class="ri-skip-back-fill"></i></button>
+                                    <button class="music-btn play-btn" id="play-pause-btn"><i
+                                            class="ri-play-fill"></i></button>
+                                    <button class="music-btn" id="next-track-btn"><i
+                                            class="ri-skip-forward-fill"></i></button>
+
+                                    <div class="volume-control">
+                                        <i class="ri-volume-up-line" id="mute-btn"></i>
+                                        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
+                                    </div>
+
+                                    <button class="music-btn toggle-btn" id="loop-btn" title="Toggle Loop"><i
+                                            class="ri-repeat-2-line"></i></button>
+                                </div>
+
+                                <div class="progress-container">
+                                    <span id="time-current">0:00</span>
+                                    <input type="range" id="seek-slider" min="0" max="100" value="0">
+                                    <span id="time-total">0:00</span>
+                                </div>
+                            </div>
+
+                            <!-- Playlist Management -->
+                            <div class="playlist-section">
+                                <div class="playlist-header">
+                                    <h4>Playlists</h4>
+                                    <button id="add-playlist-btn" class="btn-icon-small" title="Create Playlist"><i
+                                            class="ri-add-line"></i></button>
+                                </div>
+                                <div class="playlist-selector">
+                                    <select id="playlist-select" class="custom-select">
+                                        <option value="default">Default Playlist</option>
+                                    </select>
+                                </div>
+
+                                <div class="upload-area" id="audio-upload-area">
+                                    <input type="file" id="audio-file-input" accept="audio/mpeg, audio/wav, audio/ogg"
+                                        multiple style="display: none;">
+                                    <label for="audio-file-input" class="upload-label">
+                                        <i class="ri-upload-cloud-2-line"></i>
+                                        <span>Click or drag audio files here to add</span>
+                                    </label>
+                                </div>
+
+                                <ul class="track-list custom-scrollbar" id="track-list">
+                                    <!-- Tracks will be rendered here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Todo List Section -->
+            <section class="card glass-panel todo-section">
+                <div class="card-header">
+                    <h2><i class="ri-checkbox-circle-line"></i> Tasks</h2>
+                    <span class="badge" id="todo-count">0 tasks</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="todo-input" placeholder="Add a new task...">
+                    <button id="toggle-tags-btn" class="btn-icon" title="Select Tag"><i
+                            class="ri-price-tag-3-line"></i></button>
+                    <button id="add-todo-btn" class="btn-icon"><i class="ri-add-line"></i></button>
+                </div>
+
+                <div id="tag-selection-area" class="tag-drawer collapsed">
+                    <div class="tag-input-row">
+                        <input type="text" id="new-tag-input" placeholder="New tag name...">
+                        <input type="color" id="new-tag-color" value="#7b2cbf" title="Tag Color">
+                        <button id="add-tag-btn" class="btn-icon-small"><i class="ri-add-line"></i></button>
+                    </div>
+                    <div id="tags-list" class="tags-container">
+                        <!-- Tags rendered here -->
+                    </div>
+                </div>
+
+                <ul class="todo-list custom-scrollbar" id="todo-list">
+                    <!-- Tasks rendered here -->
+                </ul>
+            </section>
+
+            <!-- Links Section -->
+            <section class="card glass-panel links-section">
+                <div class="card-header">
+                    <h2><i class="ri-link"></i> Quick Links</h2>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="link-title-input" placeholder="Title">
+                    <input type="url" id="link-url-input" placeholder="https://example.com">
+                    <button id="add-link-btn" class="btn-icon"><i class="ri-add-line"></i></button>
+                </div>
+                <div class="links-grid custom-scrollbar" id="links-container">
+                    <!-- Links rendered here -->
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2026 PomoToDo Dashboard App</p>
+        </footer>
+    </div> <!-- Stats Modal -->
+    <div id="stats-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2><i class="ri-bar-chart-grouped-fill"></i> Statistics</h2>
+                <button class="close-modal-btn" id="close-stats-btn"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="stats-tabs">
+                <button class="stats-tab active" data-period="daily">Daily</button>
+                <button class="stats-tab" data-period="weekly">Weekly</button>
+                <button class="stats-tab" data-period="monthly">Monthly</button>
+            </div>
+            <div class="stats-body">
+                <div class="total-focus-time">
+                    <span class="label">Total Focus Time</span>
+                    <span class="value" id="stats-total-time">0h 0m</span>
+                </div>
+                <div class="charts-container custom-scrollbar" id="stats-charts">
+                    <!-- Charts rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load ES Module App -->
+    <script type="module" src="js/App.js?v=4"></script>
+</body>
+
+</html>

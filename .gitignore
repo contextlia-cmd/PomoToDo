@@ -1,0 +1,15 @@
+# Database
+*.db
+*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+
+# Local storage and cache
+audio_cache/
+downloads/
+
+# OS generated files
+.DS_Store
+Thumbs.db
