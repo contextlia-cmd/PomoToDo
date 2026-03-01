@@ -130,6 +130,7 @@ body {
 
 .todo-section {
     grid-area: tasks;
+    overflow: hidden;
 }
 
 .misa-section {
@@ -191,20 +192,9 @@ body {
     align-items: center;
     gap: 0.5rem;
     white-space: nowrap;
-}
-
-.badge {
-    background: var(--accent-color);
-    color: white;
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 
 /* Buttons & Inputs */
