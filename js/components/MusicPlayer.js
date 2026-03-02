@@ -82,17 +82,31 @@ export class MusicPlayer {
 
     initListeners() {
         // Window Toggle
-        this.musicFab.addEventListener('click', () => {
+        this.musicFab.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (this.musicWindow.classList.contains('collapsed')) {
                 this.musicWindow.classList.remove('collapsed');
                 this.musicWindow.classList.add('chat-size-medium');
                 if (this.eventBus) {
                     this.eventBus.emit('musicWindowOpened');
                 }
+            } else {
+                this.musicWindow.classList.add('collapsed');
             }
         });
 
-        this.closeMusicBtn.addEventListener('click', () => {
+        this.musicWindow.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', () => {
+            if (!this.musicWindow.classList.contains('collapsed')) {
+                this.musicWindow.classList.add('collapsed');
+            }
+        });
+
+        this.closeMusicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             this.musicWindow.classList.add('collapsed');
         });
 

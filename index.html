@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=6">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
@@ -343,10 +345,26 @@
     </div>
 
     <!-- Kanban Script -->
-    <script src="js/kanban.js?v=9"></script>
+    <!-- Kanban Script -->
+    <script src="js/kanban.js?v=10"></script>
 
     <!-- Load ES Module App -->
-    <script type="module" src="js/App.js?v=9"></script>
+    <script type="module" src="js/App.js?v=10"></script>
+
+    <!-- Register Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 </body>
 
 </html>

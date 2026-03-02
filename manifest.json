@@ -1,0 +1,17 @@
+{
+    "name": "PomoToDo Dashboard",
+    "short_name": "PomoToDo",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#0f0c29",
+    "theme_color": "#302b63",
+    "description": "Your productivity command center.",
+    "icons": [
+        {
+            "src": "icon.svg",
+            "sizes": "192x192 512x512 any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
