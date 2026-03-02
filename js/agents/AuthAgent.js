@@ -20,7 +20,7 @@ export class AuthAgent {
                 <button id="theme-settings-btn" class="btn btn-icon-small" title="UI Theme Settings" style="width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color);">
                     <i class="ri-palette-line"></i>
                 </button>
-                <div id="theme-dropdown" class="hidden glass-panel" style="position:absolute; right:0; top:45px; z-index: 1000; width:max-content; padding:12px; border-radius:12px; display:flex; gap:10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div id="theme-dropdown" class="glass-panel" style="position:absolute; right:0; top:45px; z-index: 1000; width:max-content; padding:12px; border-radius:12px; display:none; gap:10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                     <button class="theme-option" data-theme-val="A" title="A: Classic Cosmic" style="background:linear-gradient(135deg, #0f0c29, #302b63); width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s, border-color 0.2s;"></button>
                     <button class="theme-option" data-theme-val="B" title="B: Muted Ocean" style="background:linear-gradient(135deg, #050a0f, #0d161c); width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s, border-color 0.2s;"></button>
                     <button class="theme-option" data-theme-val="C" title="C: Matcha Zen" style="background:linear-gradient(135deg, #121411, #1a1c19); width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s, border-color 0.2s;"></button>
@@ -169,12 +169,16 @@ export class AuthAgent {
         if (this.themeBtn && this.themeDropdown) {
             this.themeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.themeDropdown.classList.toggle('hidden');
+                if (this.themeDropdown.style.display === 'none' || this.themeDropdown.style.display === '') {
+                    this.themeDropdown.style.display = 'flex';
+                } else {
+                    this.themeDropdown.style.display = 'none';
+                }
             });
 
             document.addEventListener('click', () => {
-                if (!this.themeDropdown.classList.contains('hidden')) {
-                    this.themeDropdown.classList.add('hidden');
+                if (this.themeDropdown.style.display === 'flex') {
+                    this.themeDropdown.style.display = 'none';
                 }
             });
 
@@ -184,7 +188,7 @@ export class AuthAgent {
                 btn.addEventListener('click', () => {
                     const theme = btn.dataset.themeVal;
                     this.setTheme(theme);
-                    this.themeDropdown.classList.add('hidden');
+                    this.themeDropdown.style.display = 'none';
                 });
             });
 
