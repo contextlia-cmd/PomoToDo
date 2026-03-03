@@ -5,6 +5,12 @@ export class TodoManager {
         this.eventBus = eventBus;
         this.tagManager = tagManager;
         this.todos = StorageService.get('todos', []);
+        this.todos.sort((a, b) => {
+            if (a.completed === b.completed) {
+                return b.id - a.id;
+            }
+            return a.completed ? 1 : -1;
+        });
 
         this.todoList = document.getElementById('todo-list');
         this.todoInput = document.getElementById('todo-input');
@@ -74,6 +80,13 @@ export class TodoManager {
     }
 
     save() {
+        // 未完了を上に、完了済みを下に。同じ状態なら新しい操作順（IDの降順）
+        this.todos.sort((a, b) => {
+            if (a.completed === b.completed) {
+                return b.id - a.id;
+            }
+            return a.completed ? 1 : -1;
+        });
         StorageService.set('todos', this.todos);
         this.updateCount();
     }
